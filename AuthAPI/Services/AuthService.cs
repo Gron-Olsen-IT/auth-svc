@@ -52,27 +52,34 @@ public class AuthService : IAuthService
 
     }
 
-    public Task<string> verifyToken(string token)
+    public async Task<string> verifyToken(string token)
     {
+        Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
+        mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(mySecret);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            try
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidIssuer = myIssuer,
-                ValidateAudience = false,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var email = jwtToken.Claims.First(x => x.Type == "nameid").Value;
-            return Task.FromResult(email);
-        }
-        catch (Exception e)
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var accountId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                _logger.LogInformation("Token verified");
+                return accountId;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error in AuthService.verifyToken: " + e.Message);
+            }
+        }catch(Exception e)
         {
             throw new Exception("Error in AuthService.verifyToken: " + e.Message);
         }
@@ -87,8 +94,7 @@ public class AuthService : IAuthService
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, email) };
 
-
-        var token = new JwtSecurityToken(myIssuer, "http://nginx", claims,
+        var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
         expires: DateTime.Now.AddMinutes(15),
         signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);

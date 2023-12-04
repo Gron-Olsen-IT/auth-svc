@@ -8,8 +8,10 @@ namespace AuthAPI.InfraRepo;
 public class InfraRepoDocker : IInfraRepo {
 
     private readonly HttpClient httpClient;
+    private readonly ILogger<InfraRepoDocker> _logger;
 
-    public InfraRepoDocker(){
+    public InfraRepoDocker(ILogger<InfraRepoDocker> logger){
+        _logger = logger;
         httpClient = new HttpClient
         {
             BaseAddress = new Uri("http://nginx:4000/")
@@ -20,7 +22,7 @@ public class InfraRepoDocker : IInfraRepo {
             return (await httpClient.GetFromJsonAsync<string>($"users/password/" + email))!;
         }
         catch(Exception e){
-            throw new Exception("Error in InfraRepoRender.GetuserHash: " + e.Message);
+            throw new Exception("Error in InfraRepoDocker.GetuserHash: " + e.Message);
         }
         
     }
