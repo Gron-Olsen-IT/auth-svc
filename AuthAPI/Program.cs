@@ -20,6 +20,7 @@ try
 
     //var EndPoint = "https://vaultservice:8201/";
     var EndPoint = Environment.GetEnvironmentVariable("VAULT_ADDR");
+    logger.Info("Vault address: " + EndPoint);
     if (EndPoint == null)
     {
         throw new Exception("Environment variable VAULT_ADDR not set");
@@ -41,13 +42,13 @@ try
             BaseAddress = new Uri(EndPoint)
         }
     };
-
+    // Initialize client with settings.
     IVaultClient vaultClient = new VaultClient(vaultClientSettings);
     // Use client to read a key-value secret.
+    logger.Info("Reading secret" + vaultClientSettings.ToString());
     Secret<SecretData> kv2Secret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
     string mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
     string myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
-
     logger.Info("mySecret: " + mySecret);
     logger.Info("myIssuer: " + myIssuer);
 
@@ -55,9 +56,7 @@ try
 
 
     var builder = WebApplication.CreateBuilder(args);
-
     // Add services to the container.
-
     builder.Services.AddSingleton<IVaultClient>(vaultClient);
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IInfraRepo, InfraRepoDocker>();
