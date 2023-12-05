@@ -45,7 +45,7 @@ try
     // Initialize client with settings.
     IVaultClient vaultClient = new VaultClient(vaultClientSettings);
     // Use client to read a key-value secret.
-    logger.Info("Reading secret" + vaultClientSettings.ToString());
+    logger.Info("Reading secret at: " + vaultClient.Settings.MyHttpClientProviderFunc(httpClientHandler).BaseAddress);
     Secret<SecretData> kv2Secret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
     string mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
     string myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
@@ -114,3 +114,4 @@ finally
     // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
     NLog.LogManager.Shutdown();
 }
+

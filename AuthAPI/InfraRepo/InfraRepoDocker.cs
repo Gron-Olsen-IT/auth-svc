@@ -19,6 +19,7 @@ public class InfraRepoDocker : IInfraRepo {
     }
     public async Task<string> GetuserHash(string email){
         try{
+            _logger.LogInformation(httpClient.BaseAddress.ToString() + "users/password/" + email);
             return (await httpClient.GetFromJsonAsync<string>($"users/password/" + email))!;
         }
         catch(Exception e){
