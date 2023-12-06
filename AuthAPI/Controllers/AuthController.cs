@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e.Message);
-            return BadRequest(e.Message);
+            return Unauthorized("Login credentials not found", e.Message);
         }
     }
     [AllowAnonymous]
