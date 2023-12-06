@@ -35,13 +35,14 @@ public class AuthController : ControllerBase
         }
     }
     [AllowAnonymous]
-    [HttpPost("verify")]
-    public async Task<IActionResult> Verify([FromBody] string token)
+    [HttpPost("authorize")]
+    public async Task<IActionResult> Authorize()
     {
         try
         {
-            _logger.LogInformation("Verify attempt");
-            return Ok(await _AuthService.verifyToken(token));
+            string JWT_TOKEN = Request.Headers["JWT_TOKEN"]!; 
+            _logger.LogInformation("Authorize attempt -> verifyToken");
+            return Ok(await _AuthService.verifyToken(JWT_TOKEN));
         }
         catch (Exception e)
         {

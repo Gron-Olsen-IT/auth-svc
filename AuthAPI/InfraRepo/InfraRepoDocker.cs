@@ -25,7 +25,7 @@ public class InfraRepoDocker : IInfraRepo {
                 return (await response.Content.ReadAsStringAsync())!;
             }
             else{
-                throw new Exception("Error in InfraRepoLocalhost.GetuserHash: " + response.StatusCode);
+                throw new Exception("Error in InfraRepoDocker.GetuserHash: " + response.StatusCode);
             }
         }
         catch(Exception e){

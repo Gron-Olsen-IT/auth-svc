@@ -60,6 +60,7 @@ try
     builder.Services.AddSingleton<IVaultClient>(vaultClient);
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IInfraRepo, InfraRepoDocker>();
+    
 
     builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
