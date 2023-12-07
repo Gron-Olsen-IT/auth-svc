@@ -52,8 +52,9 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<string> verifyToken(string token)
+    public async Task<string> ValidateToken(string token)
     {
+        _logger.LogInformation("verifyToken attempt at " + DateTime.Now);
         Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
         mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
         try
@@ -93,6 +94,8 @@ public class AuthService : IAuthService
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, email) };
+
+        _logger.LogInformation($"Token generated at: { DateTime.Now }");
 
         var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
         expires: DateTime.Now.AddMinutes(15),
