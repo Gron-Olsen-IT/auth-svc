@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e.Message);
-            return BadRequest(e.Message);
+            return Unauthorized(e.Message);
         }
     }
     [AllowAnonymous]
@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
         {
             string JWT_TOKEN = Request.Headers["Authorization"]!; 
             _logger.LogInformation("Authorize attempt -> verifyToken");
-            return Ok(await _AuthService.verifyToken(JWT_TOKEN));
+            return Ok(await _AuthService.ValidateToken(JWT_TOKEN));
         }
         catch (Exception e)
         {
