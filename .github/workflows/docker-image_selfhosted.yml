@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    
+jobs:
+
+  build:
+
+    runs-on: [self-hosted, macOS, ARM64]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to Docker Hub
+      env:
+        DOCKER_USER: caboe
+        DOCKER_PASSWORD: necmYb-zozgy5-hyqxiz
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - name: Build the Docker image
+      env:
+        DOCKER_USER: caboe
+      run: docker build . --file "/Users/christianboes/Documents/EAAA/4. semester/Projekt/GrønOlsen/user-svc/UserAPI/Dockerfile" --tag ${DOCKER_USER}/user-svc:latest-main
+    - name: Push Docker image to Docker Hub
+      env:
+        DOCKER_USER: caboe
+      run: docker push ${DOCKER_USER}/user-svc:latest-main
