@@ -73,14 +73,14 @@ public class AuthService : IAuthService
                 }, out SecurityToken validatedToken);
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var accountId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                _logger.LogInformation("Token verified");
                 return accountId;
             }
             catch (Exception e)
             {
                 throw new Exception("Error in AuthService.verifyToken: " + e.Message);
             }
-        }catch(Exception e)
+        }
+        catch (Exception e)
         {
             throw new Exception("Error in AuthService.verifyToken: " + e.Message);
         }
@@ -95,7 +95,7 @@ public class AuthService : IAuthService
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, email) };
 
-        _logger.LogInformation($"Token generated at: { DateTime.Now }");
+        _logger.LogInformation($"Token generated at: {DateTime.Now}");
 
         var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
         expires: DateTime.Now.AddMinutes(15),

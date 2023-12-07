@@ -72,7 +72,6 @@ try
             ValidIssuer = myIssuer,
             ValidateAudience = true,
             ValidAudience = "http://127.0.0.1",
-
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret))
