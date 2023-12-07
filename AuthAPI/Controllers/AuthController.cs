@@ -40,8 +40,8 @@ public class AuthController : ControllerBase
     {
         try
         {
-            string JWT_TOKEN = Request.Headers["Authorization"]!; 
-            _logger.LogInformation("Authorize attempt -> verifyToken");
+            string JWT_TOKEN = Request.Headers["Authorization"]!.ToString()!.Replace("Bearer ", string.Empty);
+            _logger.LogInformation("Authorize attempt: " + JWT_TOKEN);
             return Ok(await _AuthService.ValidateToken(JWT_TOKEN));
         }
         catch (Exception e)
