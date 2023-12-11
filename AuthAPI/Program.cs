@@ -49,8 +49,10 @@ try
     Secret<SecretData> kv2Secret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
     string mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
     string myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
+    string mySalt = kv2Secret.Data.Data["Salt"].ToString()!;
     logger.Info("mySecret: " + mySecret);
     logger.Info("myIssuer: " + myIssuer);
+    logger.Info("mySalt: " + mySalt);
 
 
 
@@ -71,7 +73,7 @@ try
             ValidateIssuer = true,
             ValidIssuer = myIssuer,
             ValidateAudience = true,
-            ValidAudience = "http://127.0.0.1",
+            ValidAudience = "http://localhost",
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret))

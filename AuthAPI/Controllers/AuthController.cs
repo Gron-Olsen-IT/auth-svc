@@ -50,4 +50,20 @@ public class AuthController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
+    [Authorize]
+    [HttpGet("test")]
+    public IActionResult Test()
+    {
+        try
+        {
+            _logger.LogInformation("Test attempt");
+            return Ok("Test successful");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return BadRequest(e.Message);
+        }
+    }
 }

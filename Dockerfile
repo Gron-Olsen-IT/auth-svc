@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine as build
 WORKDIR /app
 COPY . .
+RUN git submodule update --init --recursive
 RUN dotnet restore
 RUN dotnet publish -o /app/published-app
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine as runtime

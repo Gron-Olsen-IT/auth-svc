@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using VaultSharp;
 using VaultSharp.V1.Commons;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 
 public class AuthService : IAuthService
 {
@@ -18,6 +19,7 @@ public class AuthService : IAuthService
     private readonly IVaultClient _vaultClient;
     private string? mySecret;
     private string? myIssuer;
+    private string? mySalt;
 
     public AuthService(ILogger<AuthService> logger, IInfraRepo InfraRepo, IVaultClient vaultClient)
     {
@@ -31,12 +33,14 @@ public class AuthService : IAuthService
     {
         try
         {
-            var userHash = await _InfraRepo.GetuserHash(email);
-            if (userHash == null)
+            var userPasswordDatabase = await _InfraRepo.GetuserHash(email);
+            string Sha1Password = Sha1(password);
+            _logger.LogInformation("ValidateUser attempt at " + DateTime.Now + " with email: " + email + " and password: " + Sha1Password);
+            if (userPasswordDatabase == null)
             {
                 throw new Exception("User not found");
             }
-            else if (password == userHash)
+            else if (userPasswordDatabase == Sha1Password)
             {
                 return await GenerateJwtToken(email);
             }
@@ -91,6 +95,7 @@ public class AuthService : IAuthService
         Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
         mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
         myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
+
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, email) };
@@ -102,5 +107,19 @@ public class AuthService : IAuthService
         signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public static string Sha1(string input)
+    {
+        using var sha1 = SHA1.Create();
+        var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+        var sb = new StringBuilder(hash.Length * 2);
+
+        foreach (byte b in hash)
+        {
+            sb.Append(b.ToString("x2"));
+        }
+        return sb.ToString().ToUpper();
+    }
+
 
 }
