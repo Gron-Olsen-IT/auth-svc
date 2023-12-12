@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace AuthAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
@@ -19,6 +19,11 @@ public class AuthController : ControllerBase
         _AuthService = IAuthService;
     }
 
+    /// <summary>
+    /// Log in using existing user credentials
+    /// </summary>
+    /// <param name="auth"></param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] Authorization auth)
@@ -34,6 +39,11 @@ public class AuthController : ControllerBase
             return Unauthorized("Login credentials not found");
         }
     }
+
+    /// <summary>
+    /// Validate JWT token
+    /// </summary>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("authorize")]
     public async Task<IActionResult> Authorize()
@@ -51,6 +61,10 @@ public class AuthController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Test login and authorization
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     [HttpGet("test")]
     public IActionResult Test()

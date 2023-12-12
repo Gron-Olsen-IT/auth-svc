@@ -10,6 +10,7 @@ using VaultSharp.V1.Commons;
 using AuthAPI.InfraRepo;
 using NLog;
 using NLog.Web;
+using sidecar_lib;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -17,7 +18,6 @@ logger.Debug("init main");
 
 try
 {
-
     //var EndPoint = "https://vaultservice:8201/";
     var EndPoint = Environment.GetEnvironmentVariable("VAULT_ADDR");
     logger.Info("Vault address: " + EndPoint);
@@ -62,7 +62,7 @@ try
     builder.Services.AddSingleton<IVaultClient>(vaultClient);
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IInfraRepo, InfraRepoDocker>();
-    
+
 
     builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -83,16 +83,17 @@ try
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.ConfigureSwagger("AuthAPI");
 
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("./v1/swagger.json", "Auth Service API V1");
+});
 
 
     app.UseHttpsRedirection();
