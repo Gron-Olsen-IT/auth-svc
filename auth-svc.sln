@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthAPI", "AuthAPI\AuthAPI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthAPI.Tests", "AuthAPI.Tests\AuthAPI.Tests.csproj", "{F1E4A65D-9885-4154-ADF5-CD456F3FF285}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sidecar", "sidecar", "{8A7641B9-734F-41C5-A4D4-596698529DD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sidecar-lib", "sidecar\sidecar-lib\sidecar-lib.csproj", "{EB0885F8-16DB-453E-B40C-B81B0557F9F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,12 @@ Global
 		{F1E4A65D-9885-4154-ADF5-CD456F3FF285}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1E4A65D-9885-4154-ADF5-CD456F3FF285}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1E4A65D-9885-4154-ADF5-CD456F3FF285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB0885F8-16DB-453E-B40C-B81B0557F9F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB0885F8-16DB-453E-B40C-B81B0557F9F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB0885F8-16DB-453E-B40C-B81B0557F9F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB0885F8-16DB-453E-B40C-B81B0557F9F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EB0885F8-16DB-453E-B40C-B81B0557F9F9} = {8A7641B9-734F-41C5-A4D4-596698529DD1}
 	EndGlobalSection
 EndGlobal
