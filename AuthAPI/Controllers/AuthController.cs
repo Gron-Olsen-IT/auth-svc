@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace AuthAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
