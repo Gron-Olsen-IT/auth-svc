@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
     /// Log in using existing user credentials
     /// </summary>
     /// <param name="auth"></param>
-    /// <returns><string></string></returns>
+    /// <returns><string>hashedString</string></returns>
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] Authorization auth)
@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Validate JWT token
     /// </summary>
-    /// <returns>string</returns>
+    /// <returns><string>user@mail.com</string></returns>
     [AllowAnonymous]
     [HttpPost("authorize")]
     public async Task<IActionResult> Authorize()
@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Test login and authorization
     /// </summary>
-    /// <returns>string</returns>
+    /// <returns><string>Test successful</string></returns>
     [Authorize]
     [HttpGet("test")]
     public IActionResult Test()
