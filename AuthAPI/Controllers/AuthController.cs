@@ -64,10 +64,13 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Test login and authorization
     /// </summary>
+    /// <response code="200">
+    /// On succesful Get:
     /// <returns><string>Test successful</string></returns>
+    /// </response>
     [Authorize]
     [HttpGet("test")]
-    public IActionResult Test()
+        public IActionResult Test()
     {
         try
         {
