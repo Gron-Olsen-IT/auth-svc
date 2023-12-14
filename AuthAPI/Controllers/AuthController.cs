@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e.Message);
-            return Unauthorized("Login credentials not found");
+            return BadRequest("Login credentials not found");
         }
     }
 
@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
     /// <returns><string>user@mail.com</string></returns>
     [AllowAnonymous]
     [HttpPost("authorize")]
-    public async Task<IActionResult> Authorize()
+    public async Task<IActionResult> Validate()
     {
         try
         {
