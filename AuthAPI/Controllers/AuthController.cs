@@ -23,7 +23,10 @@ public class AuthController : ControllerBase
     /// Log in using existing user credentials
     /// </summary>
     /// <param name="auth"></param>
-    /// <returns><string>hashedString</string></returns>
+    /// <response code="200">
+    /// On succesful login:
+    /// <returns><string>JWT_TOKEN</string></returns>
+    /// </response>
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] Authorization auth)
