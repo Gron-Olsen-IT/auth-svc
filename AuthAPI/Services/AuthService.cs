@@ -19,7 +19,6 @@ public class AuthService : IAuthService
     private readonly IVaultClient _vaultClient;
     private string? mySecret;
     private string? myIssuer;
-    private string? mySalt;
 
     public AuthService(ILogger<AuthService> logger, IInfraRepo InfraRepo, IVaultClient vaultClient)
     {
@@ -33,9 +32,11 @@ public class AuthService : IAuthService
     {
         try
         {
+            _logger.LogInformation("ValidateUser attempt at " + DateTime.Now + " with email: " + email + " and password: " + password);
             var userPasswordDatabase = await _InfraRepo.GetuserHash(email);
+            _logger.LogInformation("Password in database: " + userPasswordDatabase);
             string Sha1Password = Sha1(password);
-            _logger.LogInformation("ValidateUser attempt at " + DateTime.Now + " with email: " + email + " and password: " + Sha1Password);
+            _logger.LogInformation("Hased password from body: " + Sha1Password);
             if (userPasswordDatabase == null)
             {
                 throw new Exception("User not found");
@@ -89,7 +90,7 @@ public class AuthService : IAuthService
             throw new Exception("Error in AuthService.verifyToken: " + e.Message);
         }
     }
-
+    
     public async Task<string> GenerateJwtToken(string email)
     {
         Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
@@ -103,7 +104,7 @@ public class AuthService : IAuthService
         _logger.LogInformation($"Token generated at: {DateTime.Now}");
 
         var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
-        expires: DateTime.Now.AddMinutes(15),
+        expires: DateTime.Now.AddMinutes(60),
         signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
