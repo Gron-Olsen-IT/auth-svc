@@ -1,5 +1,4 @@
 using AuthAPI.Services;
-
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -52,7 +51,6 @@ try
     string mySalt = kv2Secret.Data.Data["Salt"].ToString()!;
     logger.Info("mySecret: " + mySecret);
     logger.Info("myIssuer: " + myIssuer);
-    logger.Info("mySalt: " + mySalt);
 
 
 
