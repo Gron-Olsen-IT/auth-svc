@@ -17,7 +17,7 @@ logger.Debug("init main");
 
 try
 {
-    //var EndPoint = "https://vaultservice:8201/";
+    /*
     var EndPoint = Environment.GetEnvironmentVariable("VAULT_ADDR");
     logger.Info("Vault address: " + EndPoint);
     if (EndPoint == null)
@@ -52,16 +52,21 @@ try
     logger.Info("mySecret: " + mySecret);
     logger.Info("myIssuer: " + myIssuer);
 
+    */
 
 
 
     var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
-    builder.Services.AddSingleton<IVaultClient>(vaultClient);
+    //builder.Services.AddSingleton<IVaultClient>(vaultClient);
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IInfraRepo, InfraRepoDocker>();
 
-
+    AzureVault azureVault = new AzureVault();
+    string mySecret = await azureVault.GetSecret("Secret");
+    string myIssuer = await azureVault.GetSecret("Issuer");
+    logger.Info("mySecret: " + mySecret);
+    logger.Info("myIssuer: " + myIssuer);
     builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
