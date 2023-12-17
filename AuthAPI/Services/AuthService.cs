@@ -14,17 +14,19 @@ using System.Security.Cryptography;
 
 public class AuthService : IAuthService
 {
+    private readonly AzureVault _azureVault;
     private readonly ILogger<AuthService> _logger;
     private readonly IInfraRepo _InfraRepo;
-    private readonly IVaultClient _vaultClient;
+    //private readonly IVaultClient _vaultClient;
     private string? mySecret;
     private string? myIssuer;
 
-    public AuthService(ILogger<AuthService> logger, IInfraRepo InfraRepo, IVaultClient vaultClient)
+    public AuthService(ILogger<AuthService> logger, IInfraRepo InfraRepo /*, IVaultClient vaultClient*/)
     {
         _logger = logger;
         _InfraRepo = InfraRepo;
-        _vaultClient = vaultClient;
+        _azureVault = new AzureVault();
+        //_vaultClient = vaultClient;
     }
 
 
@@ -60,8 +62,9 @@ public class AuthService : IAuthService
     public async Task<string> ValidateToken(string token)
     {
         _logger.LogInformation("verifyToken attempt at " + DateTime.Now);
-        Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
-        mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
+        //Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
+        //mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
+        mySecret = await _azureVault.GetSecret("Secret");
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -92,11 +95,13 @@ public class AuthService : IAuthService
     }
     
     public async Task<string> GenerateJwtToken(string email)
-    {
+    {   /*
         Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
         mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
         myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
-
+        */
+        mySecret = await _azureVault.GetSecret("Secret");
+        myIssuer = await _azureVault.GetSecret("Issuer");
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, email) };
