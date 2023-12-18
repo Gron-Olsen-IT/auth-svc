@@ -38,7 +38,7 @@ public class AuthService : IAuthService
             var userPasswordDatabase = await _InfraRepo.GetuserHash(email);
             _logger.LogInformation("Password in database: " + userPasswordDatabase);
             string Sha1Password = Sha1(password);
-            _logger.LogInformation("Hased password from body: " + Sha1Password);
+            _logger.LogInformation("Hashed password from body: " + Sha1Password);
             if (userPasswordDatabase == null)
             {
                 throw new Exception("User not found");
