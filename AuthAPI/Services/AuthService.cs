@@ -21,11 +21,11 @@ public class AuthService : IAuthService
     private string? mySecret;
     private string? myIssuer;
 
-    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IInfraRepo InfraRepo /*, IVaultClient vaultClient*/)
+    public AuthService(ILogger<AuthService> logger, IInfraRepo InfraRepo /*, IVaultClient vaultClient*/)
     {
         _logger = logger;
         _InfraRepo = InfraRepo;
-        _azureVault = new AzureVault(configuration);
+        _azureVault = new AzureVault();
         //_vaultClient = vaultClient;
     }
 

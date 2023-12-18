@@ -9,10 +9,10 @@ public class AzureVault
     DefaultAzureCredential credentialX;
     string VaultPath;
 
-    public AzureVault(IConfiguration configuration)
+    public AzureVault()
     {
         try{
-            VaultPath = configuration["VAULT_PATH"]!;
+            VaultPath = Environment.GetEnvironmentVariable("VAULT_PATH")!;
         }
         catch (Exception e)
         {
