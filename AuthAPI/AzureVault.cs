@@ -12,7 +12,7 @@ public class AzureVault
     public AzureVault(IConfiguration configuration)
     {
         try{
-            VaultPath = configuration["VaultPath"]!;
+            VaultPath = configuration["VAULT_PATH"]!;
         }
         catch (Exception e)
         {
