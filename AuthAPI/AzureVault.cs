@@ -7,16 +7,24 @@ using Microsoft.Extensions.Azure;
 public class AzureVault
 {
     DefaultAzureCredential credentialX;
+    string VaultPath;
 
-    public AzureVault()
+    public AzureVault(IConfiguration configuration)
     {
+        try{
+            VaultPath = configuration["VaultPath"]!;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error in AzureVault.AzureVault: " + e.Message);
+        }
         credentialX = new DefaultAzureCredential();
     }
     public async Task<string> GetSecret(string secretName)
     {
         try
         {
-            var client = new SecretClient(new Uri("https://gronolsenmainvault.vault.azure.net/"), credentialX);
+            var client = new SecretClient(new Uri(VaultPath), credentialX);
             var secret = await client.GetSecretAsync(secretName);
             return secret.Value.Value;
         }
