@@ -17,45 +17,6 @@ logger.Debug("init main");
 
 try
 {
-    /*
-    var EndPoint = Environment.GetEnvironmentVariable("VAULT_ADDR");
-    logger.Info("Vault address: " + EndPoint);
-    if (EndPoint == null)
-    {
-        throw new Exception("Environment variable VAULT_ADDR not set");
-    }
-    var httpClientHandler = new HttpClientHandler
-    {
-        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => { return true; }
-    };
-
-    // Initialize one of the several auth methods.
-    IAuthMethodInfo authMethod = new TokenAuthMethodInfo("00000000-0000-0000-0000-000000000000");
-    // Initialize settings. You can also set proxies, custom delegates etc. here.
-    var vaultClientSettings = new VaultClientSettings(EndPoint, authMethod)
-    {
-        Namespace = "",
-        MyHttpClientProviderFunc = handler
-        => new HttpClient(httpClientHandler)
-        {
-            BaseAddress = new Uri(EndPoint)
-        }
-    };
-    // Initialize client with settings.
-    IVaultClient vaultClient = new VaultClient(vaultClientSettings);
-    // Use client to read a key-value secret.
-    logger.Info("Reading secret at: " + vaultClient.Settings.MyHttpClientProviderFunc(httpClientHandler).BaseAddress);
-    Secret<SecretData> kv2Secret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
-    string mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
-    string myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
-    string mySalt = kv2Secret.Data.Data["Salt"].ToString()!;
-    logger.Info("mySecret: " + mySecret);
-    logger.Info("myIssuer: " + myIssuer);
-
-    */
-
-
-
     var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
     //builder.Services.AddSingleton<IVaultClient>(vaultClient);
