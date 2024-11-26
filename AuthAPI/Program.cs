@@ -23,9 +23,11 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IInfraRepo, InfraRepoDocker>();
 
-    AzureVault azureVault = new AzureVault();
-    string mySecret = await azureVault.GetSecret("Secret");
-    string myIssuer = await azureVault.GetSecret("Issuer");
+    //AzureVault azureVault = new AzureVault();
+    //string mySecret = await azureVault.GetSecret("Secret");
+    //string myIssuer = await azureVault.GetSecret("Issuer");
+    string mySecret = "secretSECRET12345678";
+    string myIssuer = "issuerISSUER12345678";
     logger.Info("mySecret: " + mySecret);
     logger.Info("myIssuer: " + myIssuer);
     builder.Services

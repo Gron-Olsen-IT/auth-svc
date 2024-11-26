@@ -18,20 +18,23 @@ public class AuthService : IAuthService
     private readonly ILogger<AuthService> _logger;
     private readonly IInfraRepo _InfraRepo;
     //private readonly IVaultClient _vaultClient;
-    private string? mySecret;
-    private string? myIssuer;
+    private readonly string mySecret = "secretSECRET12345678";
+    private readonly string myIssuer = "issuerISSUER12345678";
 
-    public AuthService(ILogger<AuthService> logger, IInfraRepo InfraRepo /*, IVaultClient vaultClient*/)
+    public AuthService(ILogger<AuthService> logger /*, IInfraRepo InfraRepo , IVaultClient vaultClient*/)
     {
         _logger = logger;
-        _InfraRepo = InfraRepo;
-        _azureVault = new AzureVault();
+        //_InfraRepo = InfraRepo;
+        //_azureVault = new AzureVault();
         //_vaultClient = vaultClient;
     }
 
 
     public async Task<string> ValidateUser(string email, string password)
     {
+        return await GenerateJwtToken(email);
+
+        /* READY FOR PROD
         try
         {
             _logger.LogInformation("ValidateUser attempt at " + DateTime.Now + " with email: " + email + " and password: " + password);
@@ -56,6 +59,7 @@ public class AuthService : IAuthService
         {
             throw new Exception("Error in AuthService.ValidateUser: " + e.Message);
         }
+        */
 
     }
 
@@ -64,7 +68,7 @@ public class AuthService : IAuthService
         _logger.LogInformation("verifyToken attempt at " + DateTime.Now);
         //Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
         //mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
-        mySecret = await _azureVault.GetSecret("Secret");
+        //mySecret = await _azureVault.GetSecret("Secret");
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -99,9 +103,10 @@ public class AuthService : IAuthService
         Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
         mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
         myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
-        */
+        
         mySecret = await _azureVault.GetSecret("Secret");
         myIssuer = await _azureVault.GetSecret("Issuer");
+        */
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, email) };
@@ -111,6 +116,8 @@ public class AuthService : IAuthService
         var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
         expires: DateTime.Now.AddMinutes(60),
         signingCredentials: credentials);
+        
+
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 

@@ -14,7 +14,7 @@ public class InfraRepoDocker : IInfraRepo {
     public InfraRepoDocker(ILogger<InfraRepoDocker> logger, IConfiguration configuration){
         _logger = logger;
         try{
-            INFRA_CONN = configuration["INFRA_CONN"]!;
+            INFRA_CONN = configuration["INFRA_CONN"] ?? "localhost";
 
         }catch(Exception e){
             throw new Exception("INFRA_CONN not set: " + e.Message);
