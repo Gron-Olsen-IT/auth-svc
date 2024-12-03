@@ -114,7 +114,7 @@ public class AuthService : IAuthService
         _logger.LogInformation($"Token generated at: {DateTime.Now}");
 
         var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
-        expires: DateTime.Now.AddMinutes(60),
+        expires: DateTime.Now.AddMinutes(1.440),
         signingCredentials: credentials);
         
 
