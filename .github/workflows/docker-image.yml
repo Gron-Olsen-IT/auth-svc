@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Initialize Submodules
-        run: git submodule update --init --recursive
+        run: git submodule update --remote --recursive
       - name: Login to Docker Hub
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
