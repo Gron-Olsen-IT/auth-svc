@@ -10,6 +10,9 @@ using AuthAPI.InfraRepo;
 using NLog;
 using NLog.Web;
 using sidecar_lib;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
+
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -46,10 +49,29 @@ try
         };
     });
 
+
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.ConfigureSwagger("AuthAPI");
+
+    builder.Services.AddOpenTelemetry()
+    .WithMetrics(builder =>
+    {
+        builder.AddPrometheusExporter();
+        
+        //builder.AddMeter(Instrumentation.MeterName);
+
+        builder.AddMeter("Microsoft.AspNetCore.Hosting","Microsoft.AspNetCore.Server.Kestrel");
+        
+        builder.AddView("http.server.request.duration",
+            new ExplicitBucketHistogramConfiguration
+            {
+                Boundaries = new double[] { 0, 0.005, 0.01, 0.025, 0.05,
+                       0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10 }
+            });       
+
+    });
 
     var app = builder.Build();
 
@@ -61,6 +83,7 @@ try
     c.SwaggerEndpoint("./v1/swagger.json", "Auth Service API V1");
 });
 
+    app.MapPrometheusScrapingEndpoint();
 
     app.UseHttpsRedirection();
 
