@@ -1,34 +1,36 @@
 namespace AuthAPI.Services;
-using AuthAPI.InfraRepo;
 
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using AuthAPI.InfraRepo;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using VaultSharp;
 using VaultSharp.V1.Commons;
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
 
 public class AuthService : IAuthService
 {
     private readonly AzureVault _azureVault;
     private readonly ILogger<AuthService> _logger;
     private readonly IInfraRepo _InfraRepo;
+
     //private readonly IVaultClient _vaultClient;
     private readonly string mySecret = "secretSECRET12345678";
     private readonly string myIssuer = "issuerISSUER12345678";
 
-    public AuthService(ILogger<AuthService> logger /*, IInfraRepo InfraRepo , IVaultClient vaultClient*/)
+    public AuthService(
+        ILogger<AuthService> logger /*, IInfraRepo InfraRepo , IVaultClient vaultClient*/
+    )
     {
         _logger = logger;
         //_InfraRepo = InfraRepo;
         //_azureVault = new AzureVault();
         //_vaultClient = vaultClient;
     }
-
 
     public async Task<string> ValidateUser(string email, string password)
     {
@@ -60,7 +62,6 @@ public class AuthService : IAuthService
             throw new Exception("Error in AuthService.ValidateUser: " + e.Message);
         }
         */
-
     }
 
     public async Task<string> ValidateToken(string token)
@@ -75,16 +76,22 @@ public class AuthService : IAuthService
             var key = Encoding.ASCII.GetBytes(mySecret);
             try
             {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
+                tokenHandler.ValidateToken(
+                    token,
+                    new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ClockSkew = TimeSpan.Zero,
+                    },
+                    out SecurityToken validatedToken
+                );
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var accountId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                var accountId = jwtToken
+                    .Claims.First(x => x.Type == ClaimTypes.NameIdentifier)
+                    .Value;
                 return accountId;
             }
             catch (Exception e)
@@ -97,9 +104,9 @@ public class AuthService : IAuthService
             throw new Exception("Error in AuthService.verifyToken: " + e.Message);
         }
     }
-    
+
     public async Task<string> GenerateJwtToken(string email)
-    {   /*
+    { /*
         Secret<SecretData> kv2Secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "authentication", mountPoint: "secret");
         mySecret = kv2Secret.Data.Data["Secret"].ToString()!;
         myIssuer = kv2Secret.Data.Data["Issuer"].ToString()!;
@@ -113,10 +120,13 @@ public class AuthService : IAuthService
 
         _logger.LogInformation($"Token generated at: {DateTime.Now}");
 
-        var token = new JwtSecurityToken(myIssuer, "http://localhost", claims,
-        expires: DateTime.Now.AddMinutes(1.440),
-        signingCredentials: credentials);
-        
+        var token = new JwtSecurityToken(
+            myIssuer,
+            "http://localhost",
+            claims,
+            expires: DateTime.Now.AddMinutes(1.440),
+            signingCredentials: credentials
+        );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
@@ -133,6 +143,4 @@ public class AuthService : IAuthService
         }
         return sb.ToString().ToUpper();
     }
-
-
 }

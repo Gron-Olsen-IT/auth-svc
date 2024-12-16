@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using AuthAPI.InfraRepo;
 using AuthAPI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthAPI.Controllers;
 
@@ -10,7 +9,7 @@ namespace AuthAPI.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
-    
+
     private readonly IAuthService _AuthService;
 
     public AuthController(ILogger<AuthController> logger, IAuthService IAuthService)
@@ -32,8 +31,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] Authorization auth)
     {
         try
-        {   
+        {
             _logger.LogInformation("Login attempt");
+            _logger.LogInformation("Email: " + auth.Email);
             return Ok(await _AuthService.ValidateUser(auth.Email!, auth.Password!));
         }
         catch (Exception e)
@@ -53,7 +53,9 @@ public class AuthController : ControllerBase
     {
         try
         {
-            string JWT_TOKEN = Request.Headers["Authorization"]!.ToString()!.Replace("Bearer ", string.Empty);
+            string JWT_TOKEN = Request.Headers["Authorization"]!
+                .ToString()!
+                .Replace("Bearer ", string.Empty);
             _logger.LogInformation("Authorize attempt: " + JWT_TOKEN);
             return Ok(await _AuthService.ValidateToken(JWT_TOKEN));
         }
@@ -73,7 +75,7 @@ public class AuthController : ControllerBase
     /// </response>
     [Authorize]
     [HttpGet("test")]
-        public IActionResult Test()
+    public IActionResult Test()
     {
         try
         {
